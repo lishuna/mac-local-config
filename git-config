@@ -1,0 +1,21 @@
+# 该文件用于配置私钥对应的服务器
+#  Default github user(lisna@jiedaibao.com)
+ Host git.jdb-dev.com
+ HostName git.jdb-dev.com
+ User lishuna
+ IdentityFile /Users/lishuna/.ssh/id_rsa_jdb
+#
+# second user(freefish0408@gmail.com)
+# 建一个github别名，新建的帐号使用这个别名做克隆和更新
+ Host github.com
+ HostName github.com
+ User lishuna_study
+ IdentityFile /Users/lishuna/.ssh/id_rsa
+
+ # 借贷宝工作用户(lisna@jiedaibao.com)
+ 
+Host git.jdb-dev.com
+HostName git.jdb-dev.com
+User lisna@jiedaibao.com
+IdentityFile /Users/lishuna/.ssh/id_rsa_jdb
+
