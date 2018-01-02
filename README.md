@@ -1,2 +1,2 @@
-# test
-first project test
+# Mac相关配置，用于同步多台电脑
+mac相关配置文件
