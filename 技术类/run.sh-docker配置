@@ -1,0 +1,47 @@
+#!/bin/bash
+set -x
+# start ssh service
+/etc/init.d/sshd start
+/etc/init.d/rsyslog start
+# 1 clone nginx files
+if [ -d "/nginx-file" ]; then
+        cd /nginx-file
+        git pull
+else
+        git clone git@jdb-dev.com:docker/nginx-file.git
+	if [ -n "$DEPLOY_BRANCH" ]; then
+		cd /nginx-file
+		git checkout $DEPLOY_BRANCH
+	fi
+fi
+# 2 copy nginx files
+yes|cp -rf /nginx-file/$APPID/conf/* /data/nginx/conf/
+# 3 clone app codes
+if [[ $GITADDR =~ "svn" ]];then
+        if [ `ls /data/apps|wc -l` -eq 0 ]; then
+                svn co $GITADDR /data/apps
+        else
+                cd /data/apps
+                svn update
+        fi
+else
+        if [ `ls /data/apps|wc -l` -eq 0 ]; then
+                git clone $GITADDR -b $BRANCH /data/apps
+        else
+                cd /data/apps
+                git pull
+        fi
+fi
+# 4 deploy
+if [ -f "/nginx-file/$APPID/deploy.sh" ]; then
+    sh /nginx-file/$APPID/deploy.sh
+fi
+# 5 start services
+mkdir /data/logs/php7
+killall nginx
+killall php-fpm
+/data/nginx/sbin/nginx -c /data/nginx/conf/nginx.conf
+/data/php7/sbin/php-fpm
+chown -R nginx:nginx /data/apps
+chown -R nginx:nginx /data/logs
+source /monitor.sh
